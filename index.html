@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="Blackjack de práctica en el navegador con fichas ficticias: apuesta, pide, plántate, dobla y divide contra la crupier." />
+    <meta name="theme-color" content="#0a2a1f" />
+    <title>Blackjack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Manrope:wght@400;500;600;700;800&display=swap" />
+    <script type="module" crossorigin src="./assets/index-ZHDfN4Ig.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BdZAy-zG.css">
+  </head>
+  <body>
+    <div id="app" class="app">
+      <!-- ===================== PANTALLA INICIAL ===================== -->
+      <section id="screen-welcome" class="screen welcome" aria-labelledby="welcome-title">
+        <div class="welcome__panel">
+          <div class="welcome__fan" aria-hidden="true">
+            <div class="card card--black fan-card fan-card--1"><div class="card__inner"><div class="card__face card__front">
+              <span class="card__corner card__corner--tl"><b>A</b><i>♠</i></span>
+              <span class="card__center"><span class="card__pip card__pip--ace">♠</span></span>
+              <span class="card__corner card__corner--br"><b>A</b><i>♠</i></span>
+            </div></div></div>
+            <div class="card card--red fan-card fan-card--2"><div class="card__inner"><div class="card__face card__front">
+              <span class="card__corner card__corner--tl"><b>K</b><i>♥</i></span>
+              <span class="card__center"><span class="card__face-letter">K</span><span class="card__face-suit">♥</span></span>
+              <span class="card__corner card__corner--br"><b>K</b><i>♥</i></span>
+            </div></div></div>
+          </div>
+
+          <p class="eyebrow">Mesa de práctica · una baraja</p>
+          <h1 id="welcome-title" class="brand">Blackjack</h1>
+          <p class="welcome__lead">
+            Siéntate frente a Vera, la crupier, solo o con otros jugadores. Gana quien se acerque más a 21 sin pasarse.
+          </p>
+
+          <fieldset class="players-pick" id="players-pick">
+            <legend>Jugadores en la mesa</legend>
+            <div class="players-pick__options">
+              <label><input type="radio" name="players" value="1" /><span>Solo</span></label>
+              <label><input type="radio" name="players" value="3" /><span>3</span></label>
+              <label><input type="radio" name="players" value="4" /><span>4</span></label>
+              <label><input type="radio" name="players" value="5" /><span>5</span></label>
+            </div>
+            <p class="players-pick__note" id="players-note" aria-live="polite">Tú y 2 jugadores de la computadora.</p>
+          </fieldset>
+
+          <div class="welcome__actions">
+            <button type="button" class="btn btn--gold btn--lg" data-action="play">Jugar</button>
+            <button type="button" class="btn btn--ghost" data-action="open-howto">Cómo jugar</button>
+            <button type="button" class="btn btn--ghost" data-action="open-stats">Estadísticas</button>
+          </div>
+
+          <p class="welcome__balance">Tu saldo: <strong><span id="welcome-balance">500</span> fichas</strong></p>
+
+          <p class="disclaimer">
+            <span class="disclaimer__mark" aria-hidden="true">i</span>
+            Se juega con fichas ficticias, sin dinero real. No hay pagos, premios canjeables ni registro.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== MESA ===================== -->
+      <section id="screen-table" class="screen table-screen" aria-label="Mesa de blackjack" hidden>
+        <header class="topbar">
+          <button type="button" class="icon-btn" data-action="menu" aria-label="Volver a la pantalla inicial">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" /></svg>
+          </button>
+          <span class="topbar__brand">Blackjack</span>
+
+          <dl class="meters">
+            <div class="meter"><dt>Saldo</dt><dd id="balance">500</dd></div>
+            <div class="meter"><dt>Apuesta</dt><dd id="bet">0</dd></div>
+            <div class="meter meter--last"><dt>Última ronda</dt><dd id="last-net">—</dd></div>
+            <div class="meter meter--streak"><dt>Racha</dt><dd id="streak">—</dd></div>
+          </dl>
+
+          <div class="topbar__tools">
+            <button type="button" class="icon-btn" id="btn-sound" data-action="toggle-sound" aria-pressed="false" aria-label="Activar sonido" title="Sonido">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path class="fill" d="M4 9h4l5-4v14l-5-4H4z" /><path class="on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" /><path class="off" d="m16 9 6 6m0-6-6 6" /></svg>
+            </button>
+            <button type="button" class="icon-btn" id="btn-anim" data-action="toggle-anim" aria-pressed="true" aria-label="Desactivar animaciones" title="Animaciones">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c4-1 6-5 7-9s3-6 7-6" /><circle class="fill" cx="19" cy="4.5" r="1.8" /><path class="off" d="m4 4 16 16" /></svg>
+            </button>
+            <button type="button" class="icon-btn" data-action="open-stats" aria-label="Estadísticas" title="Estadísticas">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-6" /></svg>
+            </button>
+            <button type="button" class="icon-btn" data-action="open-howto" aria-label="Cómo jugar" title="Cómo jugar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 9a3 3 0 1 1 4.3 2.7c-.9.5-1.5 1.2-1.5 2.3" /><circle class="fill" cx="12" cy="18" r="1.1" /></svg>
+            </button>
+          </div>
+        </header>
+
+        <main class="felt" id="felt">
+          <div class="zone zone--dealer">
+            <div class="dealer">
+              <div class="dealer__avatar" aria-hidden="true">
+                <svg viewBox="0 0 80 80">
+                  <circle cx="40" cy="40" r="39" class="av-bg" />
+                  <path class="av-vest" d="M9 80c2-15 13-23 31-23s29 8 31 23z" />
+                  <path class="av-shirt" d="M31 57.5 40 72l9-14.5c-2.6-.9-5.6-1.4-9-1.4s-6.4.5-9 1.4z" />
+                  <rect class="av-skin" x="35" y="45" width="10" height="13" rx="3" />
+                  <path class="av-tie" d="M40 60.5 33 57v8zm0 0 7-3.5v8z" />
+                  <circle class="av-tie" cx="40" cy="61" r="1.8" />
+                  <ellipse class="av-skin" cx="40" cy="33" rx="12.5" ry="14.5" />
+                  <circle class="av-hair" cx="40" cy="14" r="6.5" />
+                  <path class="av-hair" d="M26.6 35C25 21 32 17.4 40 17.4S55 21 53.4 35c-2.5-6.6-6-10.6-13.4-10.6S29.1 28.4 26.6 35z" />
+                  <path class="av-face" d="M34 33.5h3M43 33.5h3M36.5 40.5c2.2 1.6 4.8 1.6 7 0" />
+                </svg>
+              </div>
+              <div class="dealer__talk">
+                <span class="dealer__name">Vera · crupier</span>
+                <p class="bubble" id="dealer-line" aria-live="polite">Bienvenido a la mesa. Realiza tu apuesta.</p>
+              </div>
+            </div>
+            <div class="hand-area hand-area--dealer">
+              <div class="hand" id="dealer-hand" aria-label="Cartas del crupier"></div>
+              <span class="score" id="dealer-score" hidden></span>
+            </div>
+            <div class="dealer-side">
+              <div class="shoe" id="shoe" role="img" aria-label="Baraja: 52 cartas">
+                <div class="shoe__deck" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+                <span class="shoe__count"><span id="shoe-count">52</span> cartas</span>
+              </div>
+              <div class="tray-wrap">
+                <div class="tray" id="tray" aria-hidden="true"></div>
+                <span class="tray__label">Banca</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="zone zone--center">
+            <svg class="felt__arc" viewBox="0 0 600 96" aria-hidden="true">
+              <path id="arc-1" d="M30 8 Q300 112 570 8" fill="none" />
+              <path id="arc-2" d="M60 36 Q300 136 540 36" fill="none" />
+              <text class="arc-main"><textPath href="#arc-1" startOffset="50%" text-anchor="middle">BLACKJACK PAGA 3 A 2</textPath></text>
+              <text class="arc-sub"><textPath href="#arc-2" startOffset="50%" text-anchor="middle">El crupier se planta en todos los 17</textPath></text>
+            </svg>
+            <div class="bet-spot" id="bet-spot">
+              <div class="bet-spot__stack" id="bet-stack"></div>
+              <div class="payout-stack" id="payout-stack" aria-label="Fichas ganadas" hidden></div>
+              <span class="bet-spot__amount" id="bet-amount">Apuesta</span>
+            </div>
+            <div class="result" id="result" role="status" hidden></div>
+          </div>
+
+          <div class="zone zone--player">
+            <div class="seats" id="seats" aria-label="Jugadores en la mesa"></div>
+          </div>
+
+          <div class="spotlight" aria-hidden="true"></div>
+          <div class="shuffle" id="shuffle" aria-hidden="true" hidden></div>
+        </main>
+
+        <section class="rail" aria-label="Controles de juego">
+          <div class="bankroll" id="bankroll" aria-label="Tus fichas libres">
+            <span class="bankroll__label">Tus fichas</span>
+            <div class="bankroll__stacks" id="bankroll-stacks"></div>
+            <span class="bankroll__total" id="bankroll-total"></span>
+          </div>
+          <div class="rail__main">
+          <div class="rail__group" id="betting-controls">
+            <div class="chip-rack" id="chip-rack" role="group" aria-label="Fichas para apostar"></div>
+            <div class="rail__buttons">
+              <button type="button" class="btn btn--ghost" data-action="undo">Quitar última</button>
+              <button type="button" class="btn btn--ghost" data-action="clear">Limpiar</button>
+              <button type="button" class="btn btn--ghost btn--square" data-action="bet-half" aria-label="Apostar la mitad" title="Apostar la mitad">½</button>
+              <button type="button" class="btn btn--ghost btn--square" data-action="bet-double" aria-label="Apostar el doble" title="Apostar el doble">×2</button>
+              <button type="button" class="btn btn--gold" data-action="deal">Repartir</button>
+            </div>
+          </div>
+
+          <div class="rail__group" id="play-controls" hidden>
+            <div class="risk" id="risk" hidden>
+              <span class="risk__label">Si pides, riesgo de pasarte</span>
+              <div class="risk__bar" aria-hidden="true"><span id="risk-fill"></span></div>
+              <span class="risk__value" id="risk-value">0 %</span>
+            </div>
+            <div class="rail__buttons rail__buttons--play">
+              <button type="button" class="btn btn--action" data-action="hit"><span>Pedir</span><kbd>P</kbd></button>
+              <button type="button" class="btn btn--action" data-action="stand"><span>Plantarse</span><kbd>S</kbd></button>
+              <button type="button" class="btn btn--action" data-action="double"><span>Doblar</span><kbd>D</kbd></button>
+              <button type="button" class="btn btn--action" data-action="split"><span>Dividir</span><kbd>V</kbd></button>
+            </div>
+          </div>
+
+          <p class="rail__hint" id="rail-hint"></p>
+          </div>
+        </section>
+      </section>
+
+      <!-- ===================== CÓMO JUGAR ===================== -->
+      <dialog id="dialog-howto" class="dialog dialog--wide" aria-labelledby="howto-title">
+        <div class="dialog__head">
+          <h2 id="howto-title">Cómo jugar</h2>
+          <button type="button" class="icon-btn" data-action="close-dialog" aria-label="Cerrar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+          </button>
+        </div>
+        <div class="dialog__body prose">
+          <p>Juegas contra la crupier. Ganas si tu mano se acerca más a <strong>21</strong> que la suya sin pasarte. Las fichas son ficticias y no tienen ningún valor fuera del juego.</p>
+
+          <h3>Valor de las cartas</h3>
+          <ul>
+            <li>Del 2 al 10 valen su número.</li>
+            <li>J, Q y K valen 10.</li>
+            <li>El as vale 11, o 1 si con 11 te pasarías de 21. Una mano con un as que vale 11 se muestra como «7 / 17».</li>
+          </ul>
+
+          <h3>Una ronda</h3>
+          <ol>
+            <li>Toca las fichas para apostar. Empiezas con 500 fichas. La apuesta va de 2 a 500 fichas y debe ser par, así el blackjack 3 a 2 siempre se paga en fichas enteras.</li>
+            <li>Pulsa «Repartir». Vera baraja la baraja completa delante de ti y reparte una a una: tú recibes dos cartas boca arriba; ella, una boca arriba y otra boca abajo.</li>
+            <li>Si su carta visible es un as o un 10, Vera mira su carta oculta para comprobar si tiene blackjack. Si lo tiene, la ronda termina en ese momento.</li>
+            <li>Decide: <strong>Pedir</strong> otra carta, <strong>Plantarte</strong>, <strong>Doblar</strong> o <strong>Dividir</strong>.</li>
+            <li>La crupier descubre su carta y juega sola: pide con 16 o menos y se planta con 17 o más, también con un 17 blando (as que vale 11).</li>
+          </ol>
+
+          <h3>Jugar con más personas</h3>
+          <ul>
+            <li>En la pantalla inicial eliges cuántos jugadores hay en la mesa: solo, 3, 4 o 5 contándote a ti. Los demás asientos los juega la computadora.</li>
+            <li>Cada jugador virtual tiene su estilo (Prudente, Estratega o Arriesgado), sus propias fichas ficticias y apuesta por su cuenta. Todos juegan contra Vera, no contra ti.</li>
+            <li>Se juega por orden de asiento, de derecha a izquierda. Tú estás en el centro: algunos juegan antes que tú y otros después, y sus cartas te ayudan a saber qué queda en la baraja.</li>
+            <li>Si un jugador virtual se queda sin fichas, deja la mesa y se sienta otro.</li>
+          </ul>
+
+          <h3>Jugadas</h3>
+          <ul>
+            <li><strong>Doblar:</strong> solo con tus dos primeras cartas. Pones otra apuesta igual, recibes exactamente una carta y terminas tu turno.</li>
+            <li><strong>Dividir:</strong> si tus dos primeras cartas tienen el mismo valor (8 y 8, K y 10…), las separas en dos manos con una apuesta igual cada una. Solo se divide una vez. Puedes doblar después de dividir.</li>
+            <li><strong>Ases divididos:</strong> reciben una sola carta cada uno. Un as y un 10 tras dividir valen 21, pero no cuentan como blackjack.</li>
+            <li>Con 21 tu mano se planta sola.</li>
+            <li><strong>Riesgo de pasarte:</strong> mientras juegas, la barra indica la probabilidad de pasarte si pides otra carta. Se calcula con las cartas que puedes ver; la carta oculta de Vera cuenta como desconocida.</li>
+          </ul>
+
+          <h3>Pagos</h3>
+          <table class="paytable">
+            <thead><tr><th scope="col">Resultado</th><th scope="col">Recibes</th></tr></thead>
+            <tbody>
+              <tr><td>Blackjack natural (as + carta de 10 al repartir)</td><td>3 a 2: apuesta 10, ganas 15</td></tr>
+              <tr><td>Ganas la mano o la crupier se pasa</td><td>1 a 1: apuesta 10, ganas 10</td></tr>
+              <tr><td>Empate, o los dos con blackjack</td><td>Se devuelve tu apuesta</td></tr>
+              <tr><td>Pierdes, te pasas de 21 o la crupier tiene blackjack</td><td>Pierdes la apuesta</td></tr>
+            </tbody>
+          </table>
+          <p>Si te pasas de 21 pierdes aunque la crupier también se pase. Si la crupier tiene blackjack, un 21 con tres o más cartas no le gana.</p>
+
+          <h3>Otros detalles</h3>
+          <ul>
+            <li>Se usa una baraja de 52 cartas que se baraja de nuevo antes de cada ronda.</li>
+            <li>Tus fichas libres se ven en pilas en la parte de abajo. Al terminar la ronda, la banca paga o recoge las fichas sobre la mesa.</li>
+            <li>La racha cuenta victorias (G) o derrotas (P) seguidas. Un empate no la corta.</li>
+            <li>No hay seguro ni rendición en esta versión.</li>
+            <li>Al terminar una ronda tu apuesta queda puesta para la siguiente. Cámbiala con las fichas, «Quitar última», «Limpiar», «½» (la mitad) o «×2» (el doble), y pulsa «Repartir». Durante una ronda la apuesta no se puede cambiar.</li>
+            <li>Si cierras la página a mitad de una ronda, esa ronda se anula y recuperas la apuesta.</li>
+            <li>Teclado: <kbd>P</kbd> pedir, <kbd>S</kbd> plantarse, <kbd>D</kbd> doblar, <kbd>V</kbd> dividir, <kbd>R</kbd> repartir, <kbd>⌫</kbd> quitar la última ficha.</li>
+          </ul>
+        </div>
+      </dialog>
+
+      <!-- ===================== ESTADÍSTICAS ===================== -->
+      <dialog id="dialog-stats" class="dialog" aria-labelledby="stats-title">
+        <div class="dialog__head">
+          <h2 id="stats-title">Estadísticas</h2>
+          <button type="button" class="icon-btn" data-action="close-dialog" aria-label="Cerrar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+          </button>
+        </div>
+        <div class="dialog__body">
+          <dl class="stats" id="stats-list"></dl>
+          <p class="dialog__note">Una ronda con dos manos cuenta como victoria si ganas fichas en total. El porcentaje de victorias no incluye los empates.</p>
+          <div class="dialog__actions">
+            <button type="button" class="btn btn--ghost" data-action="ask-reset-stats">Borrar estadísticas</button>
+            <button type="button" class="btn btn--ghost" data-action="ask-reset-balance">Reiniciar fichas</button>
+          </div>
+        </div>
+      </dialog>
+
+      <!-- ===================== CONFIRMACIÓN ===================== -->
+      <dialog id="dialog-confirm" class="dialog dialog--small" aria-labelledby="confirm-title" aria-describedby="confirm-body">
+        <div class="dialog__body">
+          <h2 id="confirm-title">¿Seguro?</h2>
+          <p id="confirm-body"></p>
+          <div class="dialog__actions">
+            <button type="button" class="btn btn--ghost" data-action="close-dialog">Cancelar</button>
+            <button type="button" class="btn btn--danger" id="confirm-yes" data-action="confirm-yes">Confirmar</button>
+          </div>
+        </div>
+      </dialog>
+
+      <!-- ===================== SIN FICHAS ===================== -->
+      <dialog id="dialog-bankrupt" class="dialog dialog--small" aria-labelledby="bankrupt-title">
+        <div class="dialog__body">
+          <h2 id="bankrupt-title">Te has quedado sin fichas</h2>
+          <p>Necesitas al menos 2 fichas para apostar. Como son fichas ficticias, puedes empezar de nuevo con 500 cuando quieras. Tus estadísticas se conservan.</p>
+          <div class="dialog__actions">
+            <button type="button" class="btn btn--ghost" data-action="bankrupt-menu">Volver al inicio</button>
+            <button type="button" class="btn btn--gold" data-action="bankrupt-reset">Empezar con 500 fichas</button>
+          </div>
+        </div>
+      </dialog>
+
+      <div class="fx" id="fx" aria-hidden="true"></div>
+      <div id="sr-announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+    </div>
+  </body>
+</html>
